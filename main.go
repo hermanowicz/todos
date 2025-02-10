@@ -20,12 +20,11 @@ var (
 var viewsfs embed.FS
 
 func main() {
-	log.Println("Starting todos app on port:", port)
 
 	engine := html.NewFileSystem(http.FS(viewsfs), ".html")
 
 	app := fiber.New(fiber.Config{
-		DisableStartupMessage: true,
+		DisableStartupMessage: false,
 		Prefork:               false,
 		CaseSensitive:         false,
 		Views:                 engine,
@@ -35,6 +34,13 @@ func main() {
 	app.Use(recover.New())
 
 	app.Get("/", handlers.GetIndex)
+	app.Get("/about", handlers.GetAboutPage)
+	app.Get("/privacy", handlers.GetPrivacyPolicy)
+	app.Get("/newsletter-policy", handlers.GetNewsletterPolicy)
+	app.Get("/register", handlers.GetRegisterPage)
+
+	// main todos logic
+	app.Get("/todos", handlers.GetTodos)
 
 	err := app.Listen(fmt.Sprintf(":%s", port))
 	if err != nil {
