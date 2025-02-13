@@ -3,13 +3,14 @@ package main
 import (
 	"embed"
 	"fmt"
+	"log"
+	"net/http"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/template/html/v2"
 	"github.com/hermanowicz/todos/handlers"
-	"log"
-	"net/http"
 )
 
 var (
@@ -38,6 +39,8 @@ func main() {
 	app.Get("/privacy", handlers.GetPrivacyPolicy)
 	app.Get("/newsletter-policy", handlers.GetNewsletterPolicy)
 	app.Get("/register", handlers.GetRegisterPage)
+	app.Get("/login", handlers.GetLoginPage)
+	app.Get("/new-session/:token", handlers.CreateSession)
 
 	// main todos logic
 	app.Get("/todos", handlers.GetTodos)
