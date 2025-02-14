@@ -1,13 +1,15 @@
 package models
 
 import (
+	"database/sql"
+
 	"gorm.io/gorm"
 )
 
 type Todo struct {
 	gorm.Model
-	User string
+	User sql.NullString
 	Body string
-	List string
+	List sql.NullString
 	Done bool
 }

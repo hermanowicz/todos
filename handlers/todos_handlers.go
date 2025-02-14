@@ -11,3 +11,15 @@ func GetTodos(ctx *fiber.Ctx) error {
 		},
 	})
 }
+
+func CreateTodo(ctx *fiber.Ctx) error {
+	return ctx.SendString("Hello, World! -> Create Todo")
+}
+
+func UpdateTodo(ctx *fiber.Ctx) error {
+	return ctx.SendString("Hello, World! -> Update Todo")
+}
+
+func DeleteTodo(ctx *fiber.Ctx) error {
+	return ctx.SendString("Hello, World! -> Delete Todo")
+}
