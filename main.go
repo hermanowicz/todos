@@ -5,12 +5,16 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/gofiber/template/html/v2"
 	"github.com/hermanowicz/todos/handlers"
+	"github.com/hermanowicz/todos/models"
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 )
 
 var (
@@ -23,6 +27,19 @@ var viewsfs embed.FS
 func main() {
 
 	engine := html.NewFileSystem(http.FS(viewsfs), ".html")
+
+	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
+	if err != nil {
+		log.Fatal("Error when opening sqlite", err.Error())
+	}
+
+	sqlDB, err := db.DB()
+	sqlDB.SetConnMaxLifetime(5 * time.Minute)
+	if err != nil {
+		log.Fatal("Error when opening sqlite", err.Error())
+	}
+
+	db.AutoMigrate(models.Todo{})
 
 	app := fiber.New(fiber.Config{
 		DisableStartupMessage: false,
@@ -45,7 +62,7 @@ func main() {
 	// main todos logic
 	app.Get("/todos", handlers.GetTodos)
 
-	err := app.Listen(fmt.Sprintf(":%s", port))
+	err = app.Listen(fmt.Sprintf(":%s", port))
 	if err != nil {
 		log.Fatal("Faild to start application with error: \n", err.Error())
 	}
