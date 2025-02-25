@@ -1,69 +1,41 @@
 package main
 
 import (
-	"embed"
-	"fmt"
+	"encoding/json"
 	"log"
 	"net/http"
 	"time"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/logger"
-	"github.com/gofiber/fiber/v2/middleware/recover"
-	"github.com/gofiber/template/html/v2"
-	"github.com/hermanowicz/todos/handlers"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/hermanowicz/todos/models"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
-
-var (
-	port = "8080"
-)
-
-//go:embed views/*
-var viewsfs embed.FS
 
 func main() {
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	r.Use(middleware.StripSlashes)
 
-	engine := html.NewFileSystem(http.FS(viewsfs), ".html")
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		err := json.NewEncoder(w).Encode(models.DefaultResponse{
+			ResponseBody: "Hello from api todos app, writen in go using chi freamwork.",
+			Status:       http.StatusOK,
+			YourIP:       r.RemoteAddr,
+		})
 
-	db, err := gorm.Open(sqlite.Open("test.db"), &gorm.Config{})
-	if err != nil {
-		log.Fatal("Error when opening sqlite", err.Error())
-	}
-
-	sqlDB, err := db.DB()
-	sqlDB.SetConnMaxLifetime(5 * time.Minute)
-	if err != nil {
-		log.Fatal("Error when opening sqlite", err.Error())
-	}
-
-	db.AutoMigrate(models.Todo{})
-
-	app := fiber.New(fiber.Config{
-		DisableStartupMessage: false,
-		Prefork:               false,
-		CaseSensitive:         false,
-		Views:                 engine,
+		if err != nil {
+			http.Error(w, "Json response faild with error loged for dev/ops team, sorry", http.StatusInternalServerError)
+		}
 	})
 
-	app.Use(logger.New())
-	app.Use(recover.New())
-
-	app.Get("/", handlers.GetIndex)
-	app.Get("/about", handlers.GetAboutPage)
-	app.Get("/privacy", handlers.GetPrivacyPolicy)
-	app.Get("/newsletter-policy", handlers.GetNewsletterPolicy)
-	app.Get("/register", handlers.GetRegisterPage)
-	app.Get("/login", handlers.GetLoginPage)
-	app.Get("/new-session/:token", handlers.CreateSession)
-
-	// main todos logic
-	app.Get("/todos", handlers.GetTodos)
-
-	err = app.Listen(fmt.Sprintf(":%s", port))
-	if err != nil {
-		log.Fatal("Faild to start application with error: \n", err.Error())
+	s := &http.Server{
+		WriteTimeout: 10 * time.Second,
+		ReadTimeout:  10 * time.Second,
+		IdleTimeout:  10 * time.Second,
+		Handler:      r,
+		Addr:         ":8080",
 	}
+
+	log.Fatal(s.ListenAndServe())
 }
