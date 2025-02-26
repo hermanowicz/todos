@@ -1,4 +1,4 @@
-package models
+package defs
 
 type DefaultResponse struct {
 	Status       int64  `json:"status"`

@@ -1,13 +1,8 @@
-package models
+package defs
 
-import (
-	"database/sql"
+import "database/sql"
 
-	"gorm.io/gorm"
-)
-
-type Todos struct {
-	gorm.Model
+type Todo struct {
 	TodoList  sql.NullString `json:"todo_list_name"`
 	TodoTitle string         `json:"todo_title"`
 	TodoBody  string         `json:"todo_body"`

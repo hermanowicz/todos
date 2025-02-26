@@ -1,4 +1,4 @@
-package models
+package defs
 
 type MailMessage struct {
 	From       string

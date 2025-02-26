@@ -5,7 +5,7 @@ import (
 	"net/smtp"
 	"os"
 
-	"github.com/hermanowicz/todos/models"
+	"github.com/hermanowicz/todos/defs"
 )
 
 // maybe https://github.com/wneessen/go-mail/wiki/Getting-started
@@ -30,7 +30,7 @@ func NewSmtpCruds() (*SMTP_Cruds, error) {
 	}, nil
 }
 
-func SMTP_SendMial(mBody models.MailMessage, crud *SMTP_Cruds) error {
+func SMTP_SendMial(mBody defs.MailMessage, crud *SMTP_Cruds) error {
 	err := smtp.SendMail(string(crud.HostName)+":465", crud.AuthData, mBody.From, mBody.Recipients, mBody.Msg)
 	if err != nil {
 		return err
