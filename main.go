@@ -76,11 +76,11 @@ func main() {
 		if err != nil {
 			http.Error(w, "error wile ecoding data", http.StatusInternalServerError)
 		}
-		_, err = db.Exec(`insert into todos(user, todo_title, todo_body,) values (?, ?, ?)`, &newTodo.User, &newTodo.TodoTitle, &newTodo.TodoBody)
+		_, err = db.Exec(`insert into todos(user, todo_title, todo_body) values (?, ?, ?)`, &newTodo.User, &newTodo.TodoTitle, &newTodo.TodoBody)
 		if err != nil {
-			http.Error(w, "error wile saveing data to sql", http.StatusInternalServerError)
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
-
+		http.Redirect(w, r, "loclahost:8080/todos", http.StatusTemporaryRedirect)
 	})
 
 	s := &http.Server{
