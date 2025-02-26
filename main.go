@@ -9,6 +9,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/hermanowicz/todos/defs"
+	"github.com/jmoiron/sqlx"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
@@ -18,6 +20,17 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.StripSlashes)
+
+	// db conn setup
+	db, err := sqlx.Open("sqlite3", "./test.db")
+	if err != nil {
+		log.Fatalln("Error whene opening conn to sqlite:", err.Error())
+	}
+
+	err = db.Ping()
+	if err != nil {
+		log.Fatalln("error whene pinging db")
+	}
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		err := json.NewEncoder(w).Encode(defs.DefaultResponse{
