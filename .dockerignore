@@ -1,0 +1,7 @@
+*.exe
+*.bin
+.idea
+.DS_Store
+.env
+
+todos
