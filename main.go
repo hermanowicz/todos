@@ -27,6 +27,8 @@ func main() {
 		log.Fatalln("Error whene opening conn to sqlite:", err.Error())
 	}
 
+	defer db.Close()
+
 	err = db.Ping()
 	if err != nil {
 		log.Fatalln("error whene pinging db")
