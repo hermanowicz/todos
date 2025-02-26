@@ -8,9 +8,9 @@ import (
 
 type Todos struct {
 	gorm.Model
-	TodoList  string
-	TodoTitle string
-	TodoBody  string
-	User      sql.NullString
-	Status    bool
+	TodoList  sql.NullString `json:"todo_list_name"`
+	TodoTitle string         `json:"todo_title"`
+	TodoBody  string         `json:"todo_body"`
+	User      sql.NullString `json:"user"`
+	Status    bool           `json:"status"`
 }
