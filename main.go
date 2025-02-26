@@ -45,16 +45,42 @@ func main() {
 	})
 
 	r.Get("/todos", func(w http.ResponseWriter, r *http.Request) {
-		http.Error(w, "not implemented.", http.StatusNotImplemented)
+
+		var allTodos []defs.Todo
+		rows, err := db.Query(`select user, todo_title, todo_body, status from todos`)
+		if err != nil {
+			http.Error(w, "error logged for admins.", http.StatusInternalServerError)
+		}
+		defer rows.Close()
+
+		for rows.Next() {
+			var todo defs.Todo
+			rows.Scan(&todo.User, &todo.TodoTitle, &todo.TodoBody, &todo.Status)
+			allTodos = append(allTodos, todo)
+		}
+		err = rows.Err()
+		if err != nil {
+			http.Error(w, "error logged for admins.", http.StatusInternalServerError)
+		}
+
+		_ = json.NewEncoder(w).Encode(allTodos)
 	})
 
 	r.Get("/todo-lists", func(w http.ResponseWriter, r *http.Request) {
-		http.Error(w, "not implemented.", http.StatusNotImplemented)
-
+		w.Write([]byte("some day, maybe."))
 	})
 
 	r.Post("/todos", func(w http.ResponseWriter, r *http.Request) {
-		http.Error(w, "not implemented.", http.StatusNotImplemented)
+		var newTodo defs.Todo
+		err := json.NewDecoder(r.Body).Decode(&newTodo)
+		if err != nil {
+			http.Error(w, "error wile ecoding data", http.StatusInternalServerError)
+		}
+		_, err = db.Exec(`insert into todos(user, todo_title, todo_body,) values (?, ?, ?)`, &newTodo.User, &newTodo.TodoTitle, &newTodo.TodoBody)
+		if err != nil {
+			http.Error(w, "error wile saveing data to sql", http.StatusInternalServerError)
+		}
+
 	})
 
 	s := &http.Server{

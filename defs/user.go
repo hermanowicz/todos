@@ -1,9 +1,6 @@
 package defs
 
-import "gorm.io/gorm"
-
-type User struct {
-	gorm.Model
+type ServiceUser struct {
 	Mail                  string `json:"mail"`
 	Active                bool
 	LoginToken            string `json:"login_token"`
