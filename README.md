@@ -1,11 +1,5 @@
 Simple todo app, build with:
 
-- fiber
+- go chi
 
-- gorm
-
-- sqlite
-
-- htmx
-
-- picoCss
+- sql/sqlite (for now)
