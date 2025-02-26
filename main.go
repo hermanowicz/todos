@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/hermanowicz/todos/defs"
+	"github.com/hermanowicz/todos/typy"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -33,7 +33,7 @@ func main() {
 	}
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		err := json.NewEncoder(w).Encode(defs.DefaultResponse{
+		err := json.NewEncoder(w).Encode(typy.DefaultResponse{
 			ResponseBody: "Hello from api todos app, writen in go using chi freamwork.",
 			Status:       http.StatusOK,
 			YourIP:       r.RemoteAddr,
@@ -46,7 +46,7 @@ func main() {
 
 	r.Get("/todos", func(w http.ResponseWriter, r *http.Request) {
 
-		var allTodos []defs.Todo
+		var allTodos []typy.Todo
 		qString := `select user, todo_title, todo_body, status from todos`
 		rows, err := db.Query(qString)
 		if err != nil {
@@ -55,7 +55,7 @@ func main() {
 		defer rows.Close()
 
 		for rows.Next() {
-			var todo defs.Todo
+			var todo typy.Todo
 			rows.Scan(&todo.User, &todo.TodoTitle, &todo.TodoBody, &todo.Status)
 			allTodos = append(allTodos, todo)
 		}
@@ -72,7 +72,7 @@ func main() {
 	})
 
 	r.Post("/todos", func(w http.ResponseWriter, r *http.Request) {
-		var newTodo defs.Todo
+		var newTodo typy.Todo
 		err := json.NewDecoder(r.Body).Decode(&newTodo)
 		if err != nil {
 			http.Error(w, "error wile ecoding data", http.StatusInternalServerError)

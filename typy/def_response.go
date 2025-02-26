@@ -1,4 +1,4 @@
-package defs
+package typy
 
 type DefaultResponse struct {
 	Status       int64  `json:"status"`

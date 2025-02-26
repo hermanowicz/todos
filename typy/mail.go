@@ -1,4 +1,4 @@
-package defs
+package typy
 
 type MailMessage struct {
 	From       string

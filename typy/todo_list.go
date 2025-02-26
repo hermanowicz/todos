@@ -1,4 +1,4 @@
-package defs
+package typy
 
 type TodoLists struct {
 	User     string

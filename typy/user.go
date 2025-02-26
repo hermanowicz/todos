@@ -1,4 +1,4 @@
-package defs
+package typy
 
 type ServiceUser struct {
 	Mail                  string `json:"mail"`

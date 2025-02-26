@@ -1,4 +1,4 @@
-package defs
+package typy
 
 type Todo struct {
 	TodoList  string `json:"todo_list_name,omitempty"`
