@@ -47,7 +47,8 @@ func main() {
 	r.Get("/todos", func(w http.ResponseWriter, r *http.Request) {
 
 		var allTodos []defs.Todo
-		rows, err := db.Query(`select user, todo_title, todo_body, status from todos`)
+		qString := `select user, todo_title, todo_body, status from todos`
+		rows, err := db.Query(qString)
 		if err != nil {
 			http.Error(w, "error logged for admins.", http.StatusInternalServerError)
 		}
@@ -76,7 +77,8 @@ func main() {
 		if err != nil {
 			http.Error(w, "error wile ecoding data", http.StatusInternalServerError)
 		}
-		_, err = db.Exec(`insert into todos(user, todo_title, todo_body) values (?, ?, ?)`, &newTodo.User, &newTodo.TodoTitle, &newTodo.TodoBody)
+		qString := `insert into todos(user, todo_title, todo_body) values (?, ?, ?)`
+		_, err = db.Exec(qString, &newTodo.User, &newTodo.TodoTitle, &newTodo.TodoBody)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
