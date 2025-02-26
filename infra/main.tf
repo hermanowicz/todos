@@ -17,7 +17,7 @@ resource "hcloud_network" "labs-net" {
 
 resource "hcloud_network_subnet" "network-subnet" {
   type         = "cloud"
-  network_id   = hcloud_network.main-net.id
+  network_id   = hcloud_network.labs-net.id
   network_zone = "eu-central"
   ip_range     = "10.0.1.0/24"
 }

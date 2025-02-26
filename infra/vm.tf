@@ -9,7 +9,7 @@ resource "hcloud_server" "server-1" {
   ]
 
   network {
-    network_id = hcloud_network.main-net.id
+    network_id = hcloud_network.labs-net.id
     ip         = "10.0.1.5"
     # alias_ips = [
     #   "10.0.1.6",
