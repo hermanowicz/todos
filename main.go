@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	handlers "github.com/hermanowicz/todos/handlers/todos"
 	"github.com/hermanowicz/todos/typy"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/mattn/go-sqlite3"
@@ -29,6 +30,9 @@ func main() {
 
 	defer db.Close()
 
+	// creating hadlers
+	todos := handlers.NewTodosHandler(*db)
+
 	err = db.Ping()
 	if err != nil {
 		log.Fatalln("error whene pinging db")
@@ -46,46 +50,8 @@ func main() {
 		}
 	})
 
-	r.Get("/todos", func(w http.ResponseWriter, r *http.Request) {
-
-		var allTodos []typy.Todo
-		qString := `select user, todo_title, todo_body, status from todos`
-		rows, err := db.Query(qString)
-		if err != nil {
-			http.Error(w, "error logged for admins.", http.StatusInternalServerError)
-		}
-		defer rows.Close()
-
-		for rows.Next() {
-			var todo typy.Todo
-			rows.Scan(&todo.User, &todo.TodoTitle, &todo.TodoBody, &todo.Status)
-			allTodos = append(allTodos, todo)
-		}
-		err = rows.Err()
-		if err != nil {
-			http.Error(w, "error logged for admins.", http.StatusInternalServerError)
-		}
-
-		_ = json.NewEncoder(w).Encode(allTodos)
-	})
-
-	r.Get("/todo-lists", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("some day, maybe."))
-	})
-
-	r.Post("/todos", func(w http.ResponseWriter, r *http.Request) {
-		var newTodo typy.Todo
-		err := json.NewDecoder(r.Body).Decode(&newTodo)
-		if err != nil {
-			http.Error(w, "error wile ecoding data", http.StatusInternalServerError)
-		}
-		qString := `insert into todos(user, todo_title, todo_body) values (?, ?, ?)`
-		_, err = db.Exec(qString, &newTodo.User, &newTodo.TodoTitle, &newTodo.TodoBody)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		http.Redirect(w, r, "loclahost:8080/todos", http.StatusTemporaryRedirect)
-	})
+	r.Get("/todos", todos.GetAllTodos)
+	r.Post("/todos", todos.CreateTods)
 
 	s := &http.Server{
 		WriteTimeout: 10 * time.Second,
