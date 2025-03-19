@@ -1,7 +1,12 @@
 import secrets
+import sentry_sdk
 
 from bottle import run, route, request
 from itsdangerous import URLSafeSerializer
+from upstash_redis import Redis
+
+# redis setup for upstach
+# redis = Redis.from_env()
 
 # vars
 ss_secret_key = secrets.token_urlsafe(48)
