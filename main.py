@@ -1,6 +1,3 @@
-def main():
-    print("Hello from todos!")
-
-
-if __name__ == "__main__":
-    main()
+from fastapi import FastAPI, Request
+from pydantic import BaseModel
+from tinydb import TinyDB, Query
